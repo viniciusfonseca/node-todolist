@@ -1,10 +1,11 @@
-const axios = require('axios')
+import axios from 'axios'
+import { app } from './app'
+
 const api = axios.create({ baseURL: `http://localhost:3000` })
 const TEST_LOGIN_EMAIL = "teste@example.com"
 const TEST_LOGIN_PASSWORD = "veripag"
-const app = require('./index')
 
-beforeAll(() => app.done())
+beforeAll(() => app.init())
 
 test('login', async () => {
     const { data } = await api.post('/login', {
