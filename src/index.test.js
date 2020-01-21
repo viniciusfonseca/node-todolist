@@ -4,7 +4,7 @@ const TEST_LOGIN_EMAIL = "teste@example.com"
 const TEST_LOGIN_PASSWORD = "veripag"
 const app = require('./index')
 
-beforeAll(async () => app.done())
+beforeAll(() => app.done())
 
 test('login', async () => {
     const { data } = await api.post('/login', {
@@ -63,9 +63,9 @@ describe('todos integration tests', () => {
         const { data: todos } = await user.get('/todos')
         expect(todos.find(({ id }) => id === todo.id)).toBeFalsy()
     })
+})
 
-    afterAll(async () => {
-        await app.close()
-        return app.db.close()
-    })
+afterAll(async () => {
+    await app.server.close()
+    await app.db.close()
 })

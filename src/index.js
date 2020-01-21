@@ -88,7 +88,7 @@ db.sync().then(() =>
 ).then(password =>
     Users.create({ email: TEST_LOGIN_EMAIL, password })    
 ).then(() =>
-    app.listen(PORT, () => {
+    app.server = app.listen(PORT, () => {
         console.log(`🚀 app listening at port ${PORT}`)
         appEventEmitter.emit('ready')
     })
