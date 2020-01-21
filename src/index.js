@@ -31,7 +31,8 @@ app.use(express.json())
 const authMiddleware = (req, res, next) => {
     try {
         const token = req.headers['authorization']
-        jwt.verify(token, JWT_SECRET)
+        const { expiry } = jwt.verify(token, JWT_SECRET)
+        if (expiry >= parseInt(new Date())) { throw "" }
         next()
     }
     catch (e) { res.status(401).send() }
@@ -75,7 +76,8 @@ app.post('/login', async (req, res) => {
     if (!user) { res.status(401).send(); return }
     try { await bcrypt.compare(password, user.dataValues.password) }
     catch (e) { res.status(401).send(); return }
-    const token = jwt.sign("LOGIN_TOKEN", JWT_SECRET)
+    const expiry = parseInt(new Date()) + 3 * 60 * 60 * 1000
+    const token = jwt.sign({ expiry }, JWT_SECRET)
     res.status(200).send({ token })
 })
 
