@@ -4,6 +4,8 @@ const TEST_LOGIN_EMAIL = "teste@example.com"
 const TEST_LOGIN_PASSWORD = "veripag"
 const app = require('./index')
 
+beforeAll(async () => app.done())
+
 test('login', async () => {
     const { data } = await api.post('/login', {
         email: TEST_LOGIN_EMAIL,
@@ -64,6 +66,6 @@ describe('todos integration tests', () => {
 
     afterAll(async () => {
         await app.close()
-        await app.db.close()
+        return app.db.close()
     })
 })

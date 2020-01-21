@@ -4,6 +4,7 @@ const { Sequelize, DataTypes } = require('sequelize')
 const bcrypt = require('bcrypt')
 const cors = require('cors')
 const morgan = require('morgan')
+const EventEmitter = require('events')
 
 const SALT_ROUNDS = 10
 const JWT_SECRET = Math.random().toString(36)
@@ -78,6 +79,8 @@ app.post('/login', async (req, res) => {
     res.status(200).send({ token })
 })
 
+const appEventEmitter = new EventEmitter()
+
 db.sync().then(() =>
     bcrypt.genSalt(SALT_ROUNDS)
 ).then(salt =>
@@ -85,11 +88,13 @@ db.sync().then(() =>
 ).then(password =>
     Users.create({ email: TEST_LOGIN_EMAIL, password })    
 ).then(() =>
-    app.listen(PORT, () =>
+    app.listen(PORT, () => {
         console.log(`🚀 app listening at port ${PORT}`)
-    )
+        appEventEmitter.emit('ready')
+    })
 )
 
 app.db = db
+app.done = () => new Promise(resolve => appEventEmitter.once('ready', resolve))
 
 module.exports = app
